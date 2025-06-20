@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kobe's Guitar Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#FFD700',secondary:'#000000'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes rotateScale {
+            0% { transform: rotate(0) scale(1); }
+            50% { transform: rotate(3deg) scale(1.05); }
+            100% { transform: rotate(0) scale(1); }
+        }
+        
+        @keyframes checkmarkAppear {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        .animate-slide-up {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .logo-hover:hover {
+            animation: rotateScale 0.5s ease-in-out;
+        }
+        
+        .section-visible {
+            animation: slideUp 0.8s ease-out forwards;
+        }
+        
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWx0ZXI9InVybCgjYSkiIG9wYWNpdHk9Ii4wNSIvPjwvc3ZnPg==');
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .lesson-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .checkmark {
+            display: none;
+        }
+        
+        .completed .checkmark {
+            display: flex;
+            animation: checkmarkAppear 0.5s ease-out forwards;
+        }
+        
+        .btn {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        
+        .btn:hover::after {
+            transform: translateX(0);
+        }
+        
+        .hero-gradient {
+            background: radial-gradient(circle at 30% 50%, rgba(255, 215, 0, 0.1), transparent 60%);
+        }
+        
+        input, select, textarea {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <div class="grain-overlay"></div>
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full bg-white bg-opacity-95 shadow-sm z-50 animate-fade-in">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center logo-hover">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMCIgaGVpZ2h0PSIwIj48L3N2Zz4=" alt="Kobe's Guitar Academy" class="h-12 w-auto">
+                <span class="ml-3 text-2xl font-['Pacifico'] text-gray-900">logo</span>
+            </a>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="#home" class="text-gray-800 hover:text-primary transition-colors duration-300">Home</a>
+                <a href="#about" class="text-gray-800 hover:text-primary transition-colors duration-300">About</a>
+                <a href="#lessons" class="text-gray-800 hover:text-primary transition-colors duration-300">Lessons</a>
+                <a href="#testimonials" class="text-gray-800 hover:text-primary transition-colors duration-300">Testimonials</a>
+                <a href="#contact" class="text-gray-800 hover:text-primary transition-colors duration-300">Contact</a>
+            </nav>
+            
+            <div class="md:hidden flex items-center">
+                <button class="text-gray-800 focus:outline-none">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-menu-line ri-lg"></i>
+                    </div>
+                </button>
+            </div>
+            
+            <div class="hidden md:block">
+                <a href="#join" class="btn bg-black text-white px-6 py-2 !rounded-button whitespace-nowrap">Join Now</a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section id="home" class="pt-32 pb-20 hero-gradient relative min-h-screen flex items-center">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 animate-slide-up section-visible">
+                    <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">Master the Guitar <span class="text-primary">Your Way</span></h1>
+                    <p class="text-xl text-gray-700 mb-8 max-w-lg">Discover the art of electric guitar with personalized lessons that adapt to your unique style and musical journey.</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#lessons" class="btn bg-black text-white px-8 py-3 !rounded-button whitespace-nowrap text-center">Explore Lessons</a>
+                        <a href="#about" class="btn bg-white border border-gray-300 text-gray-800 px-8 py-3 !rounded-button whitespace-nowrap text-center">Learn More</a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 mt-12 md:mt-0 animate-slide-up" style="animation-delay: 0.2s;">
+                    <img src="https://readdy.ai/api/search-image?query=professional%20musician%20playing%20electric%20guitar%20on%20stage%20with%20dramatic%20lighting%2C%20cinematic%20atmosphere%2C%20high-end%20photography%2C%20shallow%20depth%20of%20field%2C%20modern%20aesthetic%2C%20black%20and%20white%20with%20subtle%20gold%20accents%2C%20atmospheric%20and%20emotional%2C%20high-quality%20image&width=600&height=500&seq=guitar1&orientation=landscape" alt="Electric Guitar Mastery" class="w-full h-auto rounded-lg shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2 animate-slide-up">
+                    <img src="https://readdy.ai/api/search-image?query=close-up%20of%20hands%20playing%20electric%20guitar%2C%20focusing%20on%20fingerboard%20technique%2C%20artistic%20black%20and%20white%20photography%20with%20gold%20highlights%20on%20the%20guitar%20strings%2C%20moody%20lighting%2C%20professional%20studio%20setting%2C%20showing%20technical%20mastery&width=600&height=400&seq=guitar2&orientation=landscape" alt="Guitar Technique" class="w-full h-auto rounded-lg shadow-xl">
+                </div>
+                <div class="md:w-1/2 animate-slide-up" style="animation-delay: 0.2s;">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">About Our Approach</h2>
+                    <p class="text-lg text-gray-700 mb-6">Founded by Kobe, our academy brings a unique fusion of electronic and string guitar techniques that create atmospheric, emotional experiences through music.</p>
+                    <p class="text-lg text-gray-700 mb-8">Our philosophy centers on developing your individual style while building a solid technical foundation. We believe in creating musicians, not just guitar players.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mr-4">
+                                <i class="ri-music-line ri-lg text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-2">Personalized Learning</h3>
+                                <p class="text-gray-600">Customized curriculum based on your goals and musical interests</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mr-4">
+                                <i class="ri-user-star-line ri-lg text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-2">Expert Instruction</h3>
+                                <p class="text-gray-600">Learn from professional musicians with years of experience</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mr-4">
+                                <i class="ri-film-line ri-lg text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-2">Cinematic Approach</h3>
+                                <p class="text-gray-600">Create atmospheric, emotional music that tells a story</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mr-4">
+                                <i class="ri-community-line ri-lg text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-2">Supportive Community</h3>
+                                <p class="text-gray-600">Join fellow musicians in collaborative learning experiences</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Lessons Section -->
+    <section id="lessons" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 animate-slide-up">
+                <h2 class="text-4xl font-bold mb-6">Our Lesson Programs</h2>
+                <p class="text-xl text-gray-700 max-w-2xl mx-auto">Discover our carefully crafted learning paths designed to take you from beginner to master, all while developing your unique musical voice.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="lesson-card bg-white rounded-lg shadow-lg overflow-hidden animate-slide-up" style="animation-delay: 0.1s;">
+                    <div class="relative h-48">
+                        <img src="https://readdy.ai/api/search-image?query=beginner%20learning%20guitar%20basics%2C%20close-up%20of%20hands%20on%20guitar%20strings%2C%20soft%20lighting%2C%20monochrome%20with%20subtle%20gold%20highlights%2C%20educational%20setting%2C%20focus%20on%20fundamentals%2C%20clean%20composition&width=400&height=300&seq=lesson1&orientation=landscape" alt="Fundamentals" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 bg-black text-white text-sm px-3 py-1 rounded-full">Beginner</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Guitar Fundamentals</h3>
+                            <div class="checkmark w-6 h-6 flex items-center justify-center bg-green-100 text-green-600 rounded-full">
+                                <i class="ri-check-line"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 mb-6">Master the essential techniques and build a solid foundation for your guitar journey.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">8 Lessons • 4 Hours</span>
+                            <a href="#" class="text-primary font-medium hover:underline flex items-center">
+                                Start Learning
+                                <i class="ri-arrow-right-line ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lesson-card bg-white rounded-lg shadow-lg overflow-hidden animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="relative h-48">
+                        <img src="https://readdy.ai/api/search-image?query=intermediate%20electric%20guitar%20player%20practicing%20scales%20and%20techniques%2C%20focused%20expression%2C%20artistic%20black%20and%20white%20photography%20with%20gold%20accents%20on%20guitar%20hardware%2C%20studio%20setting%20with%20professional%20equipment%2C%20showing%20skill%20development&width=400&height=300&seq=lesson2&orientation=landscape" alt="Electric Techniques" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 bg-black text-white text-sm px-3 py-1 rounded-full">Intermediate</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Electric Techniques</h3>
+                            <div class="checkmark w-6 h-6 flex items-center justify-center bg-green-100 text-green-600 rounded-full">
+                                <i class="ri-check-line"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 mb-6">Explore advanced electric guitar techniques and develop your unique sound.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">12 Lessons • 6 Hours</span>
+                            <a href="#" class="text-primary font-medium hover:underline flex items-center">
+                                Start Learning
+                                <i class="ri-arrow-right-line ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lesson-card bg-white rounded-lg shadow-lg overflow-hidden animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="relative h-48">
+                        <img src="https://readdy.ai/api/search-image?query=advanced%20guitarist%20composing%20music%20in%20studio%2C%20surrounded%20by%20equipment%2C%20atmospheric%20lighting%2C%20black%20and%20white%20with%20gold%20highlights%20on%20instruments%2C%20creative%20process%2C%20artistic%20composition%2C%20showing%20mastery&width=400&height=300&seq=lesson3&orientation=landscape" alt="Composition" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 bg-black text-white text-sm px-3 py-1 rounded-full">Advanced</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Composition Mastery</h3>
+                            <div class="checkmark w-6 h-6 flex items-center justify-center bg-green-100 text-green-600 rounded-full">
+                                <i class="ri-check-line"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 mb-6">Learn to compose atmospheric, emotional pieces that showcase your artistic vision.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">10 Lessons • 8 Hours</span>
+                            <a href="#" class="text-primary font-medium hover:underline flex items-center">
+                                Start Learning
+                                <i class="ri-arrow-right-line ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center animate-slide-up" style="animation-delay: 0.4s;">
+                <a href="#join" class="btn bg-black text-white px-8 py-3 !rounded-button whitespace-nowrap inline-block">View All Courses</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 animate-slide-up">
+                <h2 class="text-4xl font-bold mb-6">What Our Students Say</h2>
+                <p class="text-xl text-gray-700 max-w-2xl mx-auto">Hear from musicians who have transformed their playing through our unique approach to guitar instruction.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-lg animate-slide-up" style="animation-delay: 0.1s;">
+                    <div class="flex items-center mb-6">
+                        <div class="text-primary">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6">"Kobe's approach to teaching guitar completely transformed my playing. The focus on developing my own style while mastering technique has been invaluable to my growth as a musician."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+                            <div class="w-12 h-12 flex items-center justify-center bg-gray-300 text-gray-600">
+                                <i class="ri-user-line ri-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Michael Richardson</h4>
+                            <p class="text-sm text-gray-500">Student for 2 years</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-lg shadow-lg animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="flex items-center mb-6">
+                        <div class="text-primary">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6">"The cinematic approach to guitar playing opened up entirely new creative possibilities for me. I've gone from playing covers to composing my own atmospheric pieces that tell a story."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+                            <div class="w-12 h-12 flex items-center justify-center bg-gray-300 text-gray-600">
+                                <i class="ri-user-line ri-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Sophia Martinez</h4>
+                            <p class="text-sm text-gray-500">Student for 1.5 years</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-lg shadow-lg animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="flex items-center mb-6">
+                        <div class="text-primary">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6">"As someone who started later in life, I was worried about keeping up, but the personalized approach made all the difference. Now I'm performing my own compositions at local venues."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+                            <div class="w-12 h-12 flex items-center justify-center bg-gray-300 text-gray-600">
+                                <i class="ri-user-line ri-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">David Thompson</h4>
+                            <p class="text-sm text-gray-500">Student for 3 years</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Join Section -->
+    <section id="join" class="py-20 bg-black text-white">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-12 md:mb-0 animate-slide-up">
+                    <h2 class="text-4xl font-bold mb-6">Begin Your Musical Journey</h2>
+                    <p class="text-xl text-gray-300 mb-8 max-w-lg">Join our community of passionate guitarists and start developing your unique sound with personalized instruction.</p>
+                    
+                    <div class="bg-white bg-opacity-10 p-8 rounded-lg mb-8">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-20 rounded-full mr-4">
+                                <i class="ri-calendar-line ri-lg text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg">Next Enrollment Period</h3>
+                                <p class="text-gray-300">June 25 - July 10, 2025</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-20 rounded-full mr-4">
+                                <i class="ri-group-line ri-lg text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg">Limited Spots Available</h3>
+                                <p class="text-gray-300">Only 15 new students accepted</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-5/12 animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="bg-white text-gray-900 p-8 rounded-lg shadow-xl">
+                        <h3 class="text-2xl font-bold mb-6 text-center">Reserve Your Spot</h3>
+                        <form>
+                            <div class="mb-4">
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded focus:border-primary" placeholder="Your name">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded focus:border-primary" placeholder="Your email">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="level" class="block text-sm font-medium text-gray-700 mb-1">Experience Level</label>
+                                <div class="relative">
+                                    <select id="level" class="w-full px-4 py-2 border border-gray-300 rounded appearance-none pr-8 focus:border-primary">
+                                        <option value="">Select your level</option>
+                                        <option value="beginner">Beginner (0-1 years)</option>
+                                        <option value="intermediate">Intermediate (1-3 years)</option>
+                                        <option value="advanced">Advanced (3+ years)</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Your Goals</label>
+                                <textarea id="message" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded focus:border-primary" placeholder="Tell us about your musical goals"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn w-full bg-black text-white py-3 !rounded-button whitespace-nowrap">Submit Application</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-12 md:mb-0 animate-slide-up">
+                    <h2 class="text-4xl font-bold mb-6">Get in Touch</h2>
+                    <p class="text-xl text-gray-700 mb-8 max-w-lg">Have questions about our programs or want to learn more? We're here to help you on your musical journey.</p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mr-4">
+                                <i class="ri-map-pin-line ri-lg text-gray-700"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-1">Studio Location</h3>
+                                <p class="text-gray-600">1234 Harmony Street, Suite 567<br>Los Angeles, CA 90001</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mr-4">
+                                <i class="ri-mail-line ri-lg text-gray-700"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-1">Email Us</h3>
+                                <p class="text-gray-600">info@kobesguitaracademy.com<br>lessons@kobesguitaracademy.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mr-4">
+                                <i class="ri-phone-line ri-lg text-gray-700"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-1">Call Us</h3>
+                                <p class="text-gray-600">(555) 123-4567<br>Mon-Fri: 9AM-6PM</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h3 class="font-semibold text-lg mb-4">Follow Us</h3>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-700 hover:bg-primary hover:text-white transition-colors duration-300">
+                                <i class="ri-instagram-line"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-700 hover:bg-primary hover:text-white transition-colors duration-300">
+                                <i class="ri-youtube-line"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-700 hover:bg-primary hover:text-white transition-colors duration-300">
+                                <i class="ri-facebook-line"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-700 hover:bg-primary hover:text-white transition-colors duration-300">
+                                <i class="ri-twitter-x-line"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-5/12 animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="bg-gray-100 p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold mb-6">Send Us a Message</h3>
+                        <form>
+                            <div class="mb-4">
+                                <label for="contact-name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                                <input type="text" id="contact-name" class="w-full px-4 py-2 border border-gray-300 rounded focus:border-primary" placeholder="Your name">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="contact-email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                <input type="email" id="contact-email" class="w-full px-4 py-2 border border-gray-300 rounded focus:border-primary" placeholder="Your email">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                                <input type="text" id="subject" class="w-full px-4 py-2 border border-gray-300 rounded focus:border-primary" placeholder="Message subject">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="contact-message" class="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
+                                <textarea id="contact-message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded focus:border-primary" placeholder="How can we help you?"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn bg-black text-white px-6 py-3 !rounded-button whitespace-nowrap">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <a href="#" class="flex items-center mb-4">
+                        <span class="text-2xl font-['Pacifico'] text-white">logo</span>
+                    </a>
+                    <p class="text-gray-400 mb-6">Elevating guitar education through cinematic, emotional, and personalized instruction.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">
+                            <i class="ri-instagram-line ri-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">
+                            <i class="ri-youtube-line ri-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">
+                            <i class="ri-facebook-line ri-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">
+                            <i class="ri-twitter-x-line ri-lg"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-primary transition-colors duration-300">Home</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-primary transition-colors duration-300">About</a></li>
+                        <li><a href="#lessons" class="text-gray-400 hover:text-primary transition-colors duration-300">Lessons</a></li>
+                        <li><a href="#testimonials" class="text-gray-400 hover:text-primary transition-colors duration-300">Testimonials</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-primary transition-colors duration-300">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Programs</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">Beginner Courses</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">Intermediate Techniques</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">Advanced Composition</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">Private Lessons</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors duration-300">Workshops</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Subscribe</h4>
+                    <p class="text-gray-400 mb-4">Stay updated with our latest courses and guitar tips.</p>
+                    <form>
+                        <div class="flex">
+                            <input type="email" class="flex-grow px-4 py-2 border-none rounded-l focus:outline-none text-gray-900" placeholder="Your email">
+                            <button type="submit" class="bg-primary text-white px-4 py-2 rounded-r !rounded-button whitespace-nowrap">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-gray-800 text-center md:flex md:justify-between md:text-left">
+                <p class="text-gray-500">&copy; 2025 Kobe's Guitar Academy. All rights reserved.</p>
+                <div class="mt-4 md:mt-0">
+                    <a href="#" class="text-gray-500 hover:text-primary transition-colors duration-300 mx-3 md:ml-6 md:mr-0">Privacy Policy</a>
+                    <a href="#" class="text-gray-500 hover:text-primary transition-colors duration-300 mx-3 md:ml-6 md:mr-0">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script id="scroll-animations">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intersection Observer for scroll animations
+            const animatedElements = document.querySelectorAll('.animate-slide-up');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('section-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            });
+            
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+    
+    <script id="lesson-completion">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate lesson completion
+            const lessonCards = document.querySelectorAll('.lesson-card');
+            
+            lessonCards.forEach((card, index) => {
+                // Add click event to simulate completion
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('a')) return; // Don't trigger if clicking the link
+                    
+                    if (!card.classList.contains('completed')) {
+                        card.classList.add('completed');
+                        
+                        // Remove the class after animation completes to allow re-triggering
+                        setTimeout(() => {
+                            card.classList.remove('completed');
+                        }, 3000);
+                    }
+                });
+            });
+        });
+    </script>
+    
+    <script id="mobile-menu">
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.querySelector('.ri-menu-line').parentElement.parentElement;
+            const mobileMenu = document.createElement('div');
+            mobileMenu.className = 'fixed inset-0 bg-black bg-opacity-90 z-50 transform translate-x-full transition-transform duration-300 ease-in-out';
+            mobileMenu.innerHTML = `
+                <div class="flex justify-end p-6">
+                    <button class="text-white focus:outline-none">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-close-line ri-lg"></i>
+                        </div>
+                    </button>
+                </div>
+                <div class="flex flex-col items-center justify-center h-full pb-20">
+                    <a href="#home" class="text-white text-2xl mb-6 hover:text-primary transition-colors duration-300">Home</a>
+                    <a href="#about" class="text-white text-2xl mb-6 hover:text-primary transition-colors duration-300">About</a>
+                    <a href="#lessons" class="text-white text-2xl mb-6 hover:text-primary transition-colors duration-300">Lessons</a>
+                    <a href="#testimonials" class="text-white text-2xl mb-6 hover:text-primary transition-colors duration-300">Testimonials</a>
+                    <a href="#contact" class="text-white text-2xl mb-6 hover:text-primary transition-colors duration-300">Contact</a>
+                    <a href="#join" class="btn bg-primary text-white px-8 py-3 !rounded-button whitespace-nowrap mt-4">Join Now</a>
+                </div>
+            `;
+            document.body.appendChild(mobileMenu);
+            
+            // Open menu
+            menuButton.addEventListener('click', function() {
+                mobileMenu.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Close menu
+            const closeButton = mobileMenu.querySelector('.ri-close-line').parentElement.parentElement;
+            closeButton.addEventListener('click', function() {
+                mobileMenu.classList.add('translate-x-full');
+                document.body.style.overflow = '';
+            });
+            
+            // Close menu when clicking on links
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.add('translate-x-full');
+                    document.body.style.overflow = '';
+                });
+            });
+        });
+    </script>
+    
+    <script id="smooth-scroll">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const headerOffset = 80;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    
+    <script id="logo-update">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Replace logo placeholder with actual image
+            const logoImg = document.querySelector('header img');
+            if (logoImg) {
+                logoImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMCIgaGVpZ2h0PSIwIj48L3N2Zz4=';
+                logoImg.alt = "Kobe's Guitar Academy";
+                logoImg.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
