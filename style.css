@@ -1,0 +1,49 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+nav {
+  background: #222;
+  padding: 1em;
+  text-align: center;
+}
+nav a {
+  color: white;
+  margin: 0 1em;
+  text-decoration: none;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+main {
+  max-width: 700px;
+  margin: 2em auto;
+  padding: 1em;
+  text-align: left;
+}
+h1 {
+  color: #d32f2f;
+}
+.video-wrapper {
+  margin: 2em 0;
+  text-align: center;
+}
+button {
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  padding: 1em 2em;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.works-list {
+  list-style: none;
+  padding-left: 0;
+}
+.works-list li {
+  margin-bottom: 1em;
+  font-size: 1.1em;
+}
